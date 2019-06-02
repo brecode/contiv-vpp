@@ -14,7 +14,7 @@ var (
 		Version: "v1",
 		Type:    "bgpconf",
 	},
-	models.WithNameTemplate("{{.Name}}"),
+	//models.WithNameTemplate("{{.Name}}"),
 	)
 )
 
