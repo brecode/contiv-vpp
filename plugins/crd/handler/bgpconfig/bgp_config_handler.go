@@ -52,7 +52,6 @@ type Handler struct {
 	kpc    K8sToProtoConverter
 
 	syncStopCh chan bool
-	name       string
 }
 
 // Deps defines dependencies for BgpConfig CRD Handler.
@@ -110,16 +109,11 @@ func (h *Handler) Init() error {
 
 // ObjectCreated is called when a CRD object is created
 func (h *Handler) ObjectCreated(obj interface{}) {
-	if h.name != "" {
-		h.Log.Errorf("Only one config at a time. Delete or update %s to use this config", h.name)
-		return
-	}
 	bgpConfig, ok := obj.(*v1.BgpConfig)
 	if !ok {
 		h.Log.Warn("Failed to cast newly created bgp-config object")
 		return
 	}
-
 	//Put global undder its prefix
 	bgpConfigProto := h.bgpConfigToProto(bgpConfig)
 	err := h.Publish.Put(model.Key(bgpConfig.Name), bgpConfigProto)
@@ -128,8 +122,6 @@ func (h *Handler) ObjectCreated(obj interface{}) {
 		h.dsSynced = false
 		h.startDataStoreResync()
 	}
-	h.name = bgpConfig.Name
-
 }
 
 // ObjectDeleted is called when a CRD object is deleted
@@ -143,7 +135,6 @@ func (h *Handler) ObjectDeleted(obj interface{}) {
 	if err != nil {
 		h.Log.Errorf("error publish.delete : %v", err)
 	}
-	h.name = ""
 }
 
 // ObjectUpdated is called when a CRD object is updated
@@ -161,7 +152,7 @@ func (h *Handler) ObjectUpdated(oldObj, newObj interface{}) {
 // into the corresponding protobuf-modelled data format.
 func (h *Handler) bgpConfigToProto(bgpConfig *v1.BgpConfig) *model.BgpConf {
 	bgpConfigProto := &model.BgpConf{}
-
+	bgpConfigProto.Name = bgpConfig.Name
 	bgpConfigProto.Global = h.bgpGlobalConfigToProto(bgpConfig.Spec.BGPGlobal)
 
 	for _, nextPeer := range bgpConfig.Spec.Peers {
@@ -201,10 +192,12 @@ func (h *Handler) bgpGlobalConfigToProto(bgpGlobalConfig v1.GlobalConf) *model.G
 	bgpGlobalConfigProto.ListenAddresses = bgpGlobalConfig.ListenAddresses
 	bgpGlobalConfigProto.RouterId = bgpGlobalConfig.RouterId
 	bgpGlobalConfigProto.UseMultiplePaths = bgpGlobalConfig.UseMultiplePaths
+	bgpGlobalConfigProto.ListenPort = bgpGlobalConfig.ListenPort
 
 	return bgpGlobalConfigProto
 
 }
+
 
 // listDataStoreItems gets all items of a given type from Etcd
 func (h *Handler) listDataStoreItems() (DsItems, error) {
