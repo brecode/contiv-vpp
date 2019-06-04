@@ -10,8 +10,9 @@ option (gogoproto.messagename_all) = true;
 
 //BGP configuration
 message BgpConf {
-    GlobalConf global = 1;
-    repeated PeerConf peers = 2;
+    string Name = 1;
+    GlobalConf global = 2;
+    repeated PeerConf peers = 3;
 }
 
 

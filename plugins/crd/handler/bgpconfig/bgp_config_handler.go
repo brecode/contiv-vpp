@@ -119,7 +119,6 @@ func (h *Handler) ObjectCreated(obj interface{}) {
 		h.Log.Warn("Failed to cast newly created bgp-config object")
 		return
 	}
-
 	//Put global undder its prefix
 	bgpConfigProto := h.bgpConfigToProto(bgpConfig)
 	err := h.Publish.Put(model.Key(bgpConfig.Name), bgpConfigProto)
@@ -161,7 +160,7 @@ func (h *Handler) ObjectUpdated(oldObj, newObj interface{}) {
 // into the corresponding protobuf-modelled data format.
 func (h *Handler) bgpConfigToProto(bgpConfig *v1.BgpConfig) *model.BgpConf {
 	bgpConfigProto := &model.BgpConf{}
-
+	bgpConfigProto.Name = bgpConfig.Name
 	bgpConfigProto.Global = h.bgpGlobalConfigToProto(bgpConfig.Spec.BGPGlobal)
 
 	for _, nextPeer := range bgpConfig.Spec.Peers {

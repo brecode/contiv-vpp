@@ -14,7 +14,7 @@ var (
 		Version: "v1",
 		Type:    "bgpconf",
 	},
-	//models.WithNameTemplate("{{.Name}}"),
+	models.WithNameTemplate("{{.Name}}"),
 	)
 )
 
@@ -31,6 +31,6 @@ func KeyPrefix() string {
 
 // Key returns the key for configuration of a given node.
 func Key(conf string) string {
-	return KeyPrefix() + conf
+	return KeyPrefix() +conf
 }
 
