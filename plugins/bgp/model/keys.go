@@ -1,5 +1,3 @@
-/*REMEMBER TO USE THIS MODEL WHEN BRINGING OVER THE PLUG-IN*/
-
 package model
 
 import (
