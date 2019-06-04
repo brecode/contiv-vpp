@@ -52,7 +52,6 @@ type Handler struct {
 	kpc    K8sToProtoConverter
 
 	syncStopCh chan bool
-	name       string
 }
 
 // Deps defines dependencies for BgpConfig CRD Handler.
@@ -110,10 +109,6 @@ func (h *Handler) Init() error {
 
 // ObjectCreated is called when a CRD object is created
 func (h *Handler) ObjectCreated(obj interface{}) {
-	if h.name != "" {
-		h.Log.Errorf("Only one config at a time. Delete or update %s to use this config", h.name)
-		return
-	}
 	bgpConfig, ok := obj.(*v1.BgpConfig)
 	if !ok {
 		h.Log.Warn("Failed to cast newly created bgp-config object")
@@ -127,8 +122,6 @@ func (h *Handler) ObjectCreated(obj interface{}) {
 		h.dsSynced = false
 		h.startDataStoreResync()
 	}
-	h.name = bgpConfig.Name
-
 }
 
 // ObjectDeleted is called when a CRD object is deleted
@@ -142,7 +135,6 @@ func (h *Handler) ObjectDeleted(obj interface{}) {
 	if err != nil {
 		h.Log.Errorf("error publish.delete : %v", err)
 	}
-	h.name = ""
 }
 
 // ObjectUpdated is called when a CRD object is updated

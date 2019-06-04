@@ -3,7 +3,6 @@
 package model
 
 import (
-	"github.com/contiv/vpp/plugins/ksr/model/ksrkey"
 	"github.com/ligato/vpp-agent/pkg/models"
 )
 
@@ -18,17 +17,3 @@ var (
 	models.WithNameTemplate("{{.Name}}"),
 	)
 )
-
-
-// Keyword defines the keyword identifying NodeConfig data.
-const Keyword = "bgpconfig"
-
-// KeyPrefix return prefix where all node configs are persisted.
-func KeyPrefix() string {
-	return ksrkey.KsrK8sPrefix + "/" + Keyword + "/"
-}
-
-// Key returns the key for configuration of a given node.
-func Key(conf string) string {
-	return KeyPrefix() + conf
-}

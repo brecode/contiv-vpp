@@ -25,7 +25,6 @@ const Keyword = "bgpconfig"
 
 // KeyPrefix return prefix where all node configs are persisted.
 func KeyPrefix() string {
-	//return ksrkey.KsrK8sPrefix + "/" + Keyword + "/"
 	return ModelBgpConf.KeyPrefix()
 }
 
